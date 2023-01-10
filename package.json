@@ -19,6 +19,7 @@
     "solidity-coverage": "^0.8.2"
   },
   "scripts": {
+    "deploy": "yarn hardhat deploy",
     "test": "yarn hardhat test",
     "test:staging": "yarn hardhat test --network goerli",
     "format": "yarn prettier --write ."
