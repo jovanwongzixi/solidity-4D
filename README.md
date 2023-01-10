@@ -5,7 +5,7 @@ Blockchain smart contract for buying and receiving winnings from 4D. All transac
 
 Credits to [PatrickAlphaC](https://github.com/PatrickAlphaC) for Solidity development course: https://github.com/smartcontractkit/full-blockchain-solidity-course-js
 
-Link to Solidity repo: https://github.com/jovanwongzixi/solidity-4D
+Link to NextJS repo: https://github.com/jovanwongzixi/nextjs-solidity-4D
 # Getting started
 ## Requirements
 - git
