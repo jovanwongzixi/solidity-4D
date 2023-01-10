@@ -7,7 +7,7 @@ const FRONT_END_ABI_FILE = "../nextjs-solidity-4d/constants/abi.json"
 
 module.exports = async function (){
     if(process.env.UPDATE_FRONT_END){
-        console.log("UPdating front end stuff")
+        console.log("Updating front end stuff")
         await updateContractAddresses()
         await updateAbi()
     }

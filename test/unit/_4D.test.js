@@ -3,7 +3,7 @@ const { network, deployments, ethers, getNamedAccounts, waffle } = require("hard
 
 !network.config.chainId === 31337
     ? describe.skip
-    : describe("_4D", function(){
+    : describe("_4D unit test", function(){
         let _4D
         let deployer
         const maxSendValue = ethers.utils.parseEther("0.15")
@@ -66,6 +66,20 @@ const { network, deployments, ethers, getNamedAccounts, waffle } = require("hard
                 const transactionResponse = await _4D.sendWinnings()
                 await transactionResponse.wait()
                 await expect(_4D.getBetDetails()).to.be.revertedWith("_4D__NoBetsMade")
+            })
+        })
+
+        describe("withdraw", function() {
+            it("Fails to withdraw if insufficient balance", async () =>{
+                const contractBalance = await waffle.provider.getBalance(_4D.address)
+                await expect(_4D.withdraw(contractBalance.add(ethers.utils.parseEther("0.1")))).to.be.revertedWith("_4D__InsufficientFundsForWithdrawal")   
+            })
+            it("Successfully withdraws", async () => {
+                const contractBalance = await waffle.provider.getBalance(_4D.address)
+                const transactionResponse = await _4D.withdraw(contractBalance)
+                await transactionResponse.wait()
+                const endContractBalance = await waffle.provider.getBalance(_4D.address)
+                assert.equal(endContractBalance.toString(), "0")
             })
         })
     })

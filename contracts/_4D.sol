@@ -7,6 +7,8 @@ error _4D__BetAmountTooLow();
 error _4D__BetAmountTooHigh();
 error _4D__NoWinningsToSend();
 error _4D__NoBetsMade();
+error _4D__InsufficientFundsForWithdrawal();
+error _4D__NotOwner();
 
 contract _4D{
 
@@ -19,14 +21,20 @@ contract _4D{
     // could change to chainlink vrf
     // for now all numbers have the same multiplier
     mapping(uint16 => bool) private s_winning4DNumbers;
-    
+    mapping(address => Bet[]) private s_addressToBets;
+
     uint256 private immutable i_minimumBet;
     //i_maximumBet set because i have limited funds :(
     uint256 private immutable i_maximumBet;
+    address private immutable i_owner;
 
-    mapping(address => Bet[]) private s_addressToBets;
+    modifier onlyOwner {
+        if(msg.sender != i_owner) revert _4D__NotOwner();
+        _;
+    }
 
     constructor(){
+        i_owner = msg.sender;
         i_minimumBet = 1 * 1e16;
         i_maximumBet = 15 * 1e16;
         s_winning4DNumbers[1356] = true;
@@ -50,6 +58,14 @@ contract _4D{
         else revert _4D__NoWinningsToSend();
     }
 
+    function fund() public payable onlyOwner{}
+
+    function withdraw(uint256 withdrawValue) public onlyOwner{
+        if(withdrawValue > address(this).balance) revert _4D__InsufficientFundsForWithdrawal();
+        (bool success, ) = msg.sender.call{value: withdrawValue}("");
+        require(success);
+    }
+
     function calculateWinnings() private view returns(uint256) {
         Bet[] memory betArray = s_addressToBets[msg.sender];
         uint256 winnings = 0;
@@ -62,8 +78,6 @@ contract _4D{
     function getBetDetails() public view returns(Bet memory){
         uint256 arrayLength = s_addressToBets[msg.sender].length;
         if (arrayLength == 0) revert _4D__NoBetsMade();
-        //uint256 betAmount = s_addressToBets[msg.sender][arrayLength].betAmount;
-        //uint16 _4DNumber = s_addressToBets[msg.sender][arrayLength]._4DNumber;
         return s_addressToBets[msg.sender][arrayLength-1];
     }
 }

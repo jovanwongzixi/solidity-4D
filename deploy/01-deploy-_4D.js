@@ -12,10 +12,10 @@ module.exports = async({ getNamedAccounts, deployments }) => {
         from: deployer,
         //args : [],
         log: true,
-        waitConfirmations: 1//network.config.blockConfirmations || 1,
+        waitConfirmations: network.config.blockConfirmations || 1,
     })
     log(`_4D deployed at ${_4D.address}`)
 
     //verify
-    if(network.config.chainId !== 31337 && process.env.ETHERSCAN_API_KEY) await verify(_4D.address, [])
+    if(chainId !== 31337 && process.env.ETHERSCAN_API_KEY) await verify(_4D.address, [])
 }
